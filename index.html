@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Casey's Chauffeur Service 🚗🦶</title>
+<style>
+:root{--g:#ffd23f;--p:#ff4fa3;--b:#2b2d6e;--c:#fff8e7}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Trebuchet MS",system-ui,sans-serif;background:var(--c);color:var(--b);min-height:100vh}
+header{background:var(--b);color:var(--g);text-align:center;padding:22px 14px 16px;border-bottom:6px dashed var(--p)}
+header h1{margin:0;font-size:26px;line-height:1.1;letter-spacing:.5px}
+header p{margin:6px 0 0;color:#fff;font-size:14px}
+.car{font-size:44px;display:inline-block;animation:bob 1.2s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-6px) rotate(-3deg)}}
+main{max-width:480px;margin:0 auto;padding:16px}
+label{display:block;font-weight:700;margin:16px 0 6px}
+input,select,textarea{width:100%;font:inherit;font-size:17px;padding:13px;border:3px solid var(--b);border-radius:14px;background:#fff;color:var(--b)}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.chip{flex:1 1 45%;border:3px solid var(--b);border-radius:14px;padding:12px 8px;text-align:center;font-weight:700;background:#fff;cursor:pointer;user-select:none}
+.chip.on{background:var(--g);box-shadow:0 4px 0 var(--b);transform:translateY(-2px)}
+.chip small{display:block;font-weight:400;font-size:12px}
+button.go{margin-top:22px;width:100%;font-size:20px;font-weight:800;padding:16px;border:0;border-radius:18px;background:var(--p);color:#fff;box-shadow:0 6px 0 #b0236f}
+button.go:active{transform:translateY(4px);box-shadow:0 2px 0 #b0236f}
+button.go:disabled{opacity:.6}
+.hp{position:absolute;left:-9999px}
+.card{background:#fff;border:3px solid var(--b);border-radius:18px;padding:18px;margin-top:16px;text-align:center}
+.eta{font-size:42px;font-weight:900;color:var(--p)}
+.hide{display:none}
+.err{color:#b00020;font-weight:700;margin-top:10px}
+footer{text-align:center;font-size:12px;opacity:.7;padding:18px}
+</style></head><body>
+<header><div class="car">🚗</div><h1>Casey's Chauffeur Service</h1><p>Premium curbside transport for the temporarily-booted 🦶📦<br>Now accepting requests from VIP passenger: <b>Laurel</b></p></header>
+<main>
+<form id="f">
+<label>Your name</label>
+<input name="name" value="Laurel" maxlength="40" required>
+
+<label>📍 Pickup spot</label>
+<input name="pickup" placeholder="e.g. front door, back door, couch" maxlength="120" required>
+
+<label>🏁 Where to, Your Highness?</label>
+<input name="dest" placeholder="e.g. tacos, the pharmacy, anywhere but here" maxlength="120" required>
+
+<label>⏰ When?</label>
+<div class="row" id="when">
+<div class="chip on" data-v="Right now">Right now<small>chop chop</small></div>
+<div class="chip" data-v="In about 15 min">15 min<small>let me find my shoe</small></div>
+<div class="chip" data-v="In about an hour">An hour<small>one more episode</small></div>
+<div class="chip" data-v="Later (see notes)">Later<small>see notes</small></div>
+</div>
+
+<label>✨ Service level</label>
+<div class="row" id="svc">
+<div class="chip on" data-v="Boot-friendly curbside service">🦶 Boot-friendly curbside<small>door-to-door, no hopping</small></div>
+<div class="chip" data-v="Royal treatment (door opened, bag carried)">👑 Royal treatment<small>door opened for you</small></div>
+<div class="chip" data-v="Express (zero scenic routes)">⚡ Express<small>no scenic detours</small></div>
+<div class="chip" data-v="Scenic route with commentary">🎤 Scenic route<small>Casey narrates</small></div>
+</div>
+
+<label>🍿 Tip (paid in snacks)</label>
+<select name="tip">
+<option>A heartfelt thank-you</option>
+<option>One (1) snack of Casey's choosing</option>
+<option>Snack of Laurel's choosing</option>
+<option>Drive-thru stop — my treat</option>
+<option>Full snack buffet 🍕🍩🥨</option>
+</select>
+
+<label>📝 Notes for the driver (optional)</label>
+<textarea name="notes" rows="3" maxlength="300" placeholder="Crutches, bags, a strong opinion about the radio…"></textarea>
+
+<input class="hp" name="website" tabindex="-1" autocomplete="off">
+<button class="go" id="btn" type="submit">🚨 Summon the Chauffeur</button>
+<div class="err hide" id="err"></div>
+</form>
+
+<div id="done" class="card hide">
+<div style="font-size:54px">🚗💨</div>
+<h2 id="dmsg" style="margin:6px 0">Request received!</h2>
+<div>Your chauffeur has been notified and is putting on his driving shoes.</div>
+<div class="eta" id="eta">~7 min</div>
+<div id="joke" style="font-weight:700"></div>
+<p style="font-size:13px;opacity:.75">*ETA is legally non-binding and subject to snack availability, traffic, and Casey finding his keys.</p>
+<button class="go" onclick="location.reload()">Request another ride</button>
+</div>
+</main>
+<footer>Casey's Chauffeur Service™ · est. 2026 · not responsible for lost crutches</footer>
+<script>
+const sel={when:"Right now",svc:"Boot-friendly curbside service"};
+for(const [id,k] of [["when","when"],["svc","svc"]])document.querySelectorAll("#"+id+" .chip").forEach(c=>c.onclick=()=>{document.querySelectorAll("#"+id+" .chip").forEach(x=>x.classList.remove("on"));c.classList.add("on");sel[k]=c.dataset.v});
+const etas=[["~7 min","Give or take a parking lot."],["~12 min","Casey is looking for his other shoe."],["~4 min","Casey is already in the car. Probably."],["~9 min","Currently arguing with a GPS."],["~15 min","Stopping to stretch. Not you. Him."],["Very soon-ish","Your ride has 4 stars and one flat tire (kidding)."]];
+const TOPIC="casey-rides-62d8218c93885b41";
+const rl=()=>{const n=Date.now(),a=JSON.parse(localStorage.getItem("cs_hits")||"[]").filter(x=>n-x<3600e3);return a};
+f.onsubmit=async e=>{e.preventDefault();err.classList.add("hide");
+const d=Object.fromEntries(new FormData(f));d.when=sel.when;d.svc=sel.svc;
+if(d.website)return;
+const hits=rl(),now=Date.now();
+if(hits.some(x=>now-x<60000)||hits.length>=5){err.textContent="Whoa there, VIP! Max 1 request a minute (and 5 an hour). The chauffeur is only one man. Try again shortly \ud83d\udc22";err.classList.remove("hide");return}
+const c=(s,n)=>String(s||"").replace(/[<>]/g,"").trim().slice(0,n);
+const msg=["From: "+c(d.pickup,120),"To: "+c(d.dest,120),"When: "+c(d.when,40),c(d.svc,60),"Tip: "+c(d.tip,60)].concat(d.notes?["Note: "+c(d.notes,300)]:[]).join("\n");
+btn.disabled=true;
+try{const r=await fetch("https://ntfy.sh",{method:"POST",body:JSON.stringify({topic:TOPIC,title:"\ud83d\ude97 RIDE: "+(c(d.name,40)||"Laurel"),message:msg,tags:["car"],priority:4})});
+if(!r.ok)throw new Error("The chauffeur's pager is jammed. Try again?");
+hits.push(now);localStorage.setItem("cs_hits",JSON.stringify(hits));
+const [t,jk]=etas[Math.floor(Math.random()*etas.length)];eta.textContent=t;joke.textContent=jk;
+dmsg.textContent="Chauffeur notified! \ud83d\udce2";f.classList.add("hide");done.classList.remove("hide");scrollTo(0,0)}
+catch(x){err.textContent=x.message.includes("fetch")?"No signal! Check your connection and try again.":x.message;err.classList.remove("hide");btn.disabled=false}};
+</script></body></html>
